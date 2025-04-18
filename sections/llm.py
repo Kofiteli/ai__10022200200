@@ -24,21 +24,21 @@ def run():
         st.error(f"❌ Failed to configure Gemini: {e}")
         st.stop()
 
-    # 3️⃣ Document upload / default load
+    # 3️⃣ Document upload (no default)
     uploaded_file = st.file_uploader("Upload a PDF document", type="pdf")
-    if uploaded_file:
-        reader = PdfReader(uploaded_file)
-        st.success(f"📄 Processed {len(reader.pages)} pages from your upload")
-    else:
-        try:
-            reader = PdfReader("2025-Budget-Statement-and-Economic-Policy_v4.pdf")
-            st.info("ℹ️ Using default Ghana Budget document")
-        except FileNotFoundError:
-            st.error("⚠️ Default PDF not found – please upload one.")
-            st.stop()
+    if not uploaded_file:
+        st.error("⚠️ Please upload a PDF document to continue.")
+        st.stop()
+
+    # At this point we know we have an uploaded_file
+    reader = PdfReader(uploaded_file)
+    st.success(f"📄 Processed {len(reader.pages)} pages from your upload")
 
     # Extract text
-    text = "".join(page.extract_text() or "" for page in reader.pages)
+    text = ""
+    for page in reader.pages:
+        if page.extract_text():
+            text += page.extract_text()
 
     # 4️⃣ Question input & call
     st.subheader("💬 Ask Your Question")
