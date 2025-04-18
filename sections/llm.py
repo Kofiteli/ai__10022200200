@@ -29,13 +29,6 @@ def run():
     if uploaded_file:
         reader = PdfReader(uploaded_file)
         st.success(f"📄 Processed {len(reader.pages)} pages from your upload")
-    else:
-        try:
-            reader = PdfReader("2025-Budget-Statement-and-Economic-Policy_v4.pdf")
-            st.info("ℹ️ Using default Ghana Budget document")
-        except FileNotFoundError:
-            st.error("⚠️ Default PDF not found – please upload one.")
-            st.stop()
 
     # Extract text
     text = "".join(page.extract_text() or "" for page in reader.pages)
