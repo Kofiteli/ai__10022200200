@@ -1,4 +1,4 @@
-# Name: Kofi Boateng Index_number: 10022200200
+# # Name: Kofi Boateng Index_number: 10022200200
 
 import streamlit as st
 from PyPDF2 import PdfReader
@@ -24,21 +24,21 @@ def run():
         st.error(f"❌ Failed to configure Gemini: {e}")
         st.stop()
 
-    # 3️⃣ Document upload (no default)
+    # 3️⃣ Document upload / default load
     uploaded_file = st.file_uploader("Upload a PDF document", type="pdf")
-    if not uploaded_file:
-        st.error("⚠️ Please upload a PDF document to continue.")
-        st.stop()
-
-    # At this point we know we have an uploaded_file
-    reader = PdfReader(uploaded_file)
-    st.success(f"📄 Processed {len(reader.pages)} pages from your upload")
+    if uploaded_file:
+        reader = PdfReader(uploaded_file)
+        st.success(f"📄 Processed {len(reader.pages)} pages from your upload")
+    else:
+        try:
+            reader = PdfReader("2025-Budget-Statement-and-Economic-Policy_v4.pdf")
+            st.info("ℹ️ Using default Ghana Budget document")
+        except FileNotFoundError:
+            st.error("⚠️ Default PDF not found – please upload one.")
+            st.stop()
 
     # Extract text
-    text = ""
-    for page in reader.pages:
-        if page.extract_text():
-            text += page.extract_text()
+    text = "".join(page.extract_text() or "" for page in reader.pages)
 
     # 4️⃣ Question input & call
     st.subheader("💬 Ask Your Question")
@@ -50,7 +50,7 @@ Answer ONLY using the text below. If you don’t see the answer, say "This infor
 DOCUMENT CONTEXT:
 {text[:15000]}
 
-Enter QUESTION:
+QUESTION:
 {question}
 
 ANSWER:
