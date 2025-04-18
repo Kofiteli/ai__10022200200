@@ -26,12 +26,17 @@ def run():
 
     # 3️⃣ Document upload / default load
     uploaded_file = st.file_uploader("Upload a PDF document", type="pdf")
-    if uploaded_file:
-        reader = PdfReader(uploaded_file)
-        st.success(f"📄 Processed {len(reader.pages)} pages from your upload")
+    if not uploaded_file:
+        st.error("⚠️ Please upload a PDF document to continue.")
+        st.stop()
 
-        # Extract text
-        text = "".join(page.extract_text() or "" for page in reader.pages)
+    # At this point we know uploaded_file is non‑None
+    reader = PdfReader(uploaded_file)
+    st.success(f"📄 Processed {len(reader.pages)} pages from your upload")
+
+    # Extract text
+    text = "".join(page.extract_text() or "" for page in reader.pages)
+
 
     # 4️⃣ Question input & call
     st.subheader("💬 Ask Your Question")
