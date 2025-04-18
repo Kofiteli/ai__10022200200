@@ -1,139 +1,139 @@
-# AI Project Dashboard
+# Kofi Boateng_10022200200 Streamlit AI Application
 
-This repository implements a Streamlit app that showcases four AI tasks:
+## Project Overview
+This Streamlit-based application demonstrates core Artificial Intelligence concepts and tools through interactive interfaces for:
 
-1. **Regression**: Train and evaluate a linear regression model on user-uploaded data.
-2. **Clustering**: Perform K-Means clustering with interactive visualization.
-3. **Neural Network**: Train a feedforward neural network for classification with real-time training metrics.
-4. **LLM Q&A (RAG)**: A Retrieval-Augmented Generation system using Hugging Face embeddings and a pre-trained Mistral-7B-Instruct model.
+- **Regression**: Simple linear regression with user-uploaded CSV datasets.
+- **Clustering**: K-Means clustering on multi-feature data with adjustable cluster count.
+- **Neural Network**: Feedforward neural network for classification using TensorFlow.
+- **Large Language Model (LLM) Q&A**: Retrieval-Augmented Generation (RAG) approach for question-and-answer tasks on custom data sources.
+
+## Author
+- **Name**: Kofi Boateng
+- **Index Number**: 10022200200
+
+## Repository Name
+```
+ai_10022200200
+```
 
 ---
 
-## Getting Started
+## Prerequisites
+- Python 3.8 or higher
+- `pip` package installer
 
-### Prerequisites
+## Installation
+1. **Clone the repository**
+   ```bash
+   git clone https://github.com/Kofiteli/ai__10022200200.git
+   cd ai_10022200200
+   ```
+2. **Create and activate a virtual environment** (optional but recommended)
+   ```bash
+   python -m venv venv
+   source venv/bin/activate   # macOS/Linux
+   venv\Scripts\activate    # Windows
+   ```
+3. **Install dependencies**
+   ```bash
+   pip install --upgrade pip
+   pip install -r requirements.txt
+   ```
 
-- Python 3.11
-- `venv` (virtual environment)
+## Configuration
+1. **Secrets**: Create a `secrets.toml` in the project root for the Gemini API key:
+   ```toml
+   [GEMINI]
+   GEMINI_API_KEY = "<your_gemini_api_key_here>"
+   ```
+2. **Data files**: Place any default datasets in the project root (e.g., `Ghana_Election_Result.csv`, `2025-Budget-Statement-and-Economic-Policy_v4.pdf`).
 
-### Install Dependencies
-
-```bash
-python3.11 -m venv venv
-source venv/bin/activate      # macOS/Linux
-# or venv\Scripts\activate   # Windows
-
-pip install -r requirements.txt
-```
-
-### Running the App
-
+## Running the Application
+Launch the Streamlit dashboard:
 ```bash
 streamlit run app.py
 ```
-
-Use the sidebar to navigate between tasks: Regression, Clustering, Neural Network, and LLM Q&A.
-
----
-
-##  1. Regression Section
-
-1. Upload a CSV file.
-2. Select the **target column** (must be numeric).
-3. Preview data and train a simple Linear Regression model.
-4. View **Mean Absolute Error (MAE)** and **R² score**.
-5. See an **Actual vs. Predicted** scatter plot (with regression line if only one feature).
-6. Enter custom feature values to make new predictions.
+Navigate to the displayed URL (usually `http://localhost:8501`) to access the unified dashboard.
 
 ---
 
-##  2. Clustering Section
+## Application Sections
 
-1. Upload a CSV file with numeric features.
-2. Adjust the **number of clusters** via a slider.
-3. Perform K-Means clustering.
-4. View a 2D or 3D cluster plot with centroids.
-5. Download the clustered dataset as CSV.
+### 1️⃣ Regression
+- **Upload**: CSV file and specify the **target column** name.
+- **Model**: Simple linear regression (sklearn).
+- **Output**:
+  - Preview of dataset.
+  - Performance metrics: Mean Absolute Error, R² score.
+  - Scatter plot: Predictions vs. Actual.
+  - Custom input form for real-time predictions.
+
+### 2️⃣ Clustering
+- **Upload**: CSV file with numeric features.
+- **Algorithm**: K-Means clustering.
+- **Controls**: Slider to select number of clusters.
+- **Visualization**: 2D scatter (and 3D if three features).
+- **Export**: Download clustered dataset with labels.
+
+### 3️⃣ Neural Network
+- **Upload**: Classification CSV and specify **target column**.
+- **Model**: TensorFlow Feedforward Neural Network.
+- **Hyperparameters**: Epochs, learning rate, batch size.
+- **Visualization**: Live training/validation loss and accuracy plots.
+- **Inference**: Input fields for custom samples, real-time predictions.
+
+### 4️⃣ Large Language Model (LLM) Q&A
+- **Approach**: Retrieval-Augmented Generation (RAG) using Google Generative AI or Hugging Face model.
+- **Datasets**:
+  - `2025-Budget-Statement-and-Economic-Policy_v4.pdf`
+  - `Ghana_Election_Result.csv`
+- **Architecture**: PDF/CSV → Text splitters → Vector store (FAISS/Chroma) → LLM.
+- **Interface**:
+  - Input box for user queries.
+  - Display generated answers with confidence scores.
 
 ---
 
-##  3. Neural Network Section
-
-1. Upload a classification dataset (CSV).
-2. Select the **target column**.
-3. Choose **epochs** and **learning rate**.
-4. Train a feedforward neural network (TensorFlow/Keras).
-5. Monitor **training/validation loss and accuracy** graphs.
-6. Input custom feature values for on-the-fly prediction.
-
----
-
-##  4. LLM Q&A Section (RAG with Hugging Face)
-
-### Dataset & Model Details
-
-- **Dataset**: `Ghana_Election_Result.csv` (fields: Region, Constituency, Valid\_Votes).
-- **Embedding Model**: `all-MiniLM-L6-v2` from Hugging Face Transformers.
-- **LLM**: `mistralai/Mistral-7B-Instruct-v0.1` served via Hugging Face Hub.
-
-### Methodology
-
-1. **Load Data**: Read CSV into a Pandas DataFrame.
-2. **Summarize Structure**: Compute number of constituencies per region.
-3. **Context Generation**: Combine summary and row-level strings into a text block.
-4. **Chunking**: Split into 1,000-character chunks with overlap.
-5. **Embedding**: Create vector embeddings for each chunk.
-6. **Indexing**: Build a FAISS in-memory vector store.
-7. **Retrieve**: Use RetrievalQA chain to find relevant chunks.
-8. **Generate**: Query Mistral-7B for final answer.
-9. **Display**: Show answer and, optionally, confidence/metadata.
-
-### Architecture Diagram
-
-```mermaid
-flowchart LR
-    A[Streamlit UI] --> B[Data Loader (Pandas/DataFrameLoader)]
-    B --> C[Text Splitter (CharacterTextSplitter)]
-    C --> D[FAISS Vector Store]
-    D --> E[Retriever]
-    E --> F[LLM (Mistral-7B via HuggingFaceHub)]
-    F --> G[Answer]
-    G --> A
+## Project Structure
+```
+├── app.py                # Main Streamlit dashboard
+├── regression.py         # Regression module
+├── clustering.py         # Clustering module
+├── neural_network.py     # Neural network module
+├── llm.py                # LLM Q&A module
+├── requirements.txt      # Python dependencies
+├── 2025-Budget-Statement-and-Economic-Policy_v4.pdf  # Sample PDF data
+└── Ghana_Election_Result.csv                         # Sample CSV data
 ```
 
 ### Usage
 
-1. Optionally upload a different CSV or use the default.
+1. Optionally upload a different pdf or use the default.
 2. Expand **"Show context sent to model"** to inspect the text block.
-3. Enter a question (e.g., "How many constituencies are in Ashanti Region?").
+3. Enter a question (e.g., “What is the theme of the 2025 Budget Statement and Economic Policy?”).
 4. View the model’s answer in real time.
 
 ### Sample Questions
 
-- "What is the valid vote count for Bantama?"
-- "Which region has the most constituencies?"
-- "Ashanti Region has how many constituencies?"
+- “What is the theme of the 2025 Budget Statement and Economic Policy?”
+- “List the main fiscal policy objectives for 2025.”
+- “What was Ghana’s end‑period inflation in 2024 and how did it compare to the target?”
+- “Summarize the state of Ghana’s economy at the end of 2024 under the IMF‑supported programme.”
+- “How much were total central government payables at end‑2024, and what were the biggest categories?”
+- “What are the key energy‑sector fiscal risks highlighted in the document?”
+- “Describe Ghana’s performance on the ECOWAS convergence criteria as of December 2024.”
+- “What are the projected debt‑service obligations for 2025–2028?”
+- “Which stalled bilateral‑loan projects were identified and how long will it take to complete them?”
+- “What medium‑term macroeconomic targets has government set for 2025–2026?”
 
 ---
 
-##  5. Comparison with ChatGPT
-
-**Question:** "How many constituencies are in Ashanti Region?"
-
-- **Our RAG Model:** "Ashanti Region has 18 constituencies."
-- **ChatGPT Response:** "Ashanti Region has 47 constituencies."
-
-**Analysis:** Our model pulls directly from the provided dataset, ensuring factual alignment. ChatGPT’s answer is based on external or outdated knowledge and may not match custom data.
+## Deployment
+1. **GitHub**: https://github.com/Kofiteli/ai__10022200200.git
+2. **Collaborator**:`godwin.danso@acity.edu.gh` or `GodwinDansoAcity` 
+3. **Cloud Deployment**: ai--10022200200.streamlit.app/
 
 ---
-
-##  6. Documentation & Collaboration
-
-- **Repository Name:** `ai_10022200200` 
-- **Collaborator:** Add `godwin.danso@acity.edu.gh` on GitHub.
-- **Deployment:** Streamlit Cloud or similar; share the live URL.
-
----
-
 
 

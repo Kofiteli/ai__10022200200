@@ -1,4 +1,4 @@
-# # Name: Kofi Boateng Index_number: 10022200200
+# Name: Kofi Boateng Index_number: 10022200200
 
 import streamlit as st
 from PyPDF2 import PdfReader
@@ -43,14 +43,14 @@ def run():
     # 4️⃣ Question input & call
     st.subheader("💬 Ask Your Question")
     question = st.text_area("Enter your question about the document:")
-    if st.button("Get Answer") and question.strip():
+    if st.button("Click to Answer") and question.strip():
         prompt = f"""
 Answer ONLY using the text below. If you don’t see the answer, say "This information is not in the document."
 
 DOCUMENT CONTEXT:
 {text[:15000]}
 
-QUESTION:
+Enter QUESTION:
 {question}
 
 ANSWER:
@@ -58,6 +58,6 @@ ANSWER:
         with st.spinner("🔍 Analyzing document…"):
             try:
                 response = model.generate_content(prompt)
-                st.markdown(f"**Answer:** {response.text}")
+                st.markdown(f"**Your Answer:** {response.text}")
             except Exception as e:
-                st.error(f"❌ Generation error: {e}")
+                st.error(f"❌ There was a Generation error: {e}")
