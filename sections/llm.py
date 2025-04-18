@@ -30,8 +30,8 @@ def run():
         reader = PdfReader(uploaded_file)
         st.success(f"📄 Processed {len(reader.pages)} pages from your upload")
 
-    # Extract text
-    text = "".join(page.extract_text() or "" for page in reader.pages)
+        # Extract text
+        text = "".join(page.extract_text() or "" for page in reader.pages)
 
     # 4️⃣ Question input & call
     st.subheader("💬 Ask Your Question")
