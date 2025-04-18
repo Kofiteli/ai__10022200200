@@ -23,6 +23,7 @@ dataclasses-json==0.6.7
 Deprecated==1.2.18
 distro==1.9.0
 durationpy==0.9
+faiss-cpu==1.10.0
 fastapi==0.115.9
 filelock==3.18.0
 flatbuffers==25.2.10
@@ -86,6 +87,7 @@ overrides==7.7.0
 packaging==24.2
 pandas==2.2.3
 pillow==11.2.1
+plotly==6.0.1
 posthog==3.25.0
 propcache==0.3.1
 protobuf==5.29.4
