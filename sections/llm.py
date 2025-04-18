@@ -4,44 +4,63 @@ import streamlit as st
 import pandas as pd
 from transformers import AutoTokenizer, AutoModelForQuestionAnswering
 from transformers import pipeline
-
+from PyPDF2 import PdfReader
+import google.generativeai as genai
 
 def run():
-    st.subheader("🤖 LLM - Q&A from Ghana Election Dataset (Hugging Face)")
+    st.subheader("🤖 LLM - Q&A from Budget Statement and Economic Policy")
 
-    st.markdown("We’re using Hugging Face’s `distilbert-base-cased-distilled-squad` for question answering.")
+    st.markdown("We’re using Gemini API for question and answering.")
 
-    # Load dataset
-    local_path = os.path.join("assets", "Ghana_Election_Result.csv")
-    df = pd.read_csv(local_path)
-    st.markdown("#### Preview of Ghana Election Dataset")
-    st.dataframe(df.head())
+    # 1️⃣ Grab the key from secrets
+    try:
+        api_key = st.secrets["GEMINI_API_KEY"]
+    except KeyError:
+        st.error("🔑 Missing GEMINI_API_KEY in secrets.toml")
+        st.stop()
 
-    st.markdown("### 🧠 Ask a question about the dataset")
+    # 2️⃣ Configure Gemini
+    try:
+        genai.configure(api_key=api_key)
+        model = genai.GenerativeModel("gemini-1.5-pro")
+    except Exception as e:
+        st.error(f"❌ Gemini init error: {e}")
+        st.stop()
 
-    # Pre-process the dataset into readable text
-    # Combine key columns into plain text for the model
-    context = ""
-    for index, row in df.iterrows():
-        row_text = f"Region: {row.get('Region', '')}, Constituency: {row.get('Constituency', '')}, Valid Votes: {row.get('Valid_Votes', '')}"
-        context += row_text + "\n"
+    st.success("✅ Gemini API configured")
 
-    # Load Hugging Face Question-Answering pipeline
-    with st.spinner("Loading model..."):
-        tokenizer = AutoTokenizer.from_pretrained("distilbert-base-cased-distilled-squad")
-        model = AutoModelForQuestionAnswering.from_pretrained("distilbert-base-cased-distilled-squad")
-        qa_pipeline = pipeline("question-answering", model=model, tokenizer=tokenizer, framework="pt")
+    # 3️⃣ Document upload / default load
+    uploaded = st.file_uploader("Upload a PDF document", type="pdf")
+    if uploaded:
+        reader = PdfReader(uploaded)
+    else:
+        try:
+            reader = PdfReader("2025-Budget-Statement-and-Economic-Policy_v4.pdf")
+            st.info("ℹ️ Using default budget PDF")
+        except FileNotFoundError:
+            st.error("⚠️ No PDF found; please upload one.")
+            st.stop()
 
-    # Question input
-    question = st.text_input("Type your question below 👇")
+    text = "".join(page.extract_text() or "" for page in reader.pages)
+    st.write(f"📄 Document has {len(reader.pages)} pages")
 
-    if question:
-        with st.spinner("Searching for the answer..."):
-            result = qa_pipeline({
-                'context': context,
-                'question': question
-            })
-            st.success(f"Answer: {result['answer']}")
-            st.caption(f"Confidence Score: {result['score']:.2f}")
+    # 4️⃣ Question input & call
+    question = st.text_area("Ask your question about the document:")
+    if st.button("Get Answer") and question.strip():
+        prompt = f"""
+        Answer only using the text below. If you don’t see the answer, say “Not in document.”
 
+        DOCUMENT:
+        {text[:15000]}
 
+        QUESTION:
+        {question}
+
+        ANSWER:
+        """
+        with st.spinner("🔍 Thinking..."):
+            try:
+                response = model.generate_content(prompt)
+                st.markdown(f"**Answer:** {response.text}")
+            except Exception as e:
+                st.error(f"❌ Generation error: {e}")
